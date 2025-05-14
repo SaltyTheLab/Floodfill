@@ -1,0 +1,98 @@
+package com;
+import org.junit.jupiter.api.Test;
+
+import java.io.File;
+import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeAll;
+
+public class FloodFillTest {
+    @BeforeAll
+    public void setup() {
+        FloodFill FloodFill = new FloodFill();
+    }
+
+    @Test
+    public void testFloodFillBasic() {
+        int[][] array = {
+                { 0, 0, 1 },
+                { 0, 1, 1 },
+                { 0, 0, 0 }
+        };
+
+        FloodFill.floodFill(array, 0, 0, 1);
+
+        int[][] expected = {
+                { 1, 1, 1 },
+                { 1, 1, 1 },
+                { 1, 1, 1 }
+        };
+
+        assertArrayEquals(expected, array);
+    }
+
+    @Test
+    public void testFloodFillNoChange() {
+        int[][] array = {
+                { 1, 1 },
+                { 1, 1 }
+        };
+
+        FloodFill.floodFill(array, 0, 0, 1);
+
+        int[][] expected = {
+                { 1, 1 },
+                { 1, 1 }
+        };
+
+        assertArrayEquals(expected, array);
+    }
+
+    @Test
+    public void testFloodFillEdge() {
+        int[][] array = {
+                { 1, 0, 0 },
+                { 0, 0, 0 },
+                { 0, 0, 1 }
+        };
+
+        FloodFill.floodFill(array, 0, 0, 0);
+
+        int[][] expected = {
+                { 0, 0, 0 },
+                { 0, 0, 0 },
+                { 0, 0, 1 }
+        };
+
+        assertArrayEquals(expected, array);
+    }
+
+    @Test
+    public void testLoadAndSavePreservesSize() throws IOException {
+        String input = "input.png"; // Ensure this exists in your test dir
+        String output = "test_output.png";
+
+        int[][] original = FloodFill.loadImageToArray(input);
+        FloodFill.saveArrayToImage(original, output);
+        int[][] loadedBack = FloodFill.loadImageToArray(output);
+
+        assertEquals(original.length, loadedBack.length);
+        assertEquals(original[0].length, loadedBack[0].length);
+    }
+
+    @Test
+    public void testImageContentAfterSaveLoad() throws IOException {
+        int[][] array = {
+                { 0, 1 },
+                { 1, 0 }
+        };
+
+        String tempFile = "test_temp.png";
+        FloodFill.saveArrayToImage(array, tempFile);
+        int[][] reloaded = FloodFill.loadImageToArray(tempFile);
+
+        assertArrayEquals(array, reloaded);
+        new File(tempFile).delete(); // Clean up
+    }
+}
